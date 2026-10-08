@@ -243,3 +243,21 @@
 .h-screen {
   height: 100dvh;
 }
+
+/* ───────────────────────────────────────── */
+/* Telegram Mini App                         */
+/* ───────────────────────────────────────── */
+
+/* Используем viewport-высоту из Telegram на iOS, 
+   чтобы клавиатура не ломала layout */
+.tg-viewport {
+  height: var(--tg-viewport-height, 100dvh);
+}
+
+/* Telegram передаёт safe-area — учитываем */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .tg-safe-bottom {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+}
+

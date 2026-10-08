@@ -20,6 +20,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ImagePicker } from "@/components/image-picker";
 import { AppSidebar } from "@/components/app-sidebar";
+import { useTelegram } from "@/components/telegram-provider";
 import { cn } from "@/lib/utils";
 import {
   loadMessages,
@@ -421,6 +422,7 @@ function ChatPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useTranslation();
+  const { isTelegram, tg, user: tgUser, haptic } = useTelegram();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -433,6 +435,8 @@ function ChatPageInner() {
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const sentPromptRef = useRef<string | null>(null);
+
+  const displayName = tgUser?.first_name || "Leonid";
 
   const placeholder = useTypingPlaceholder([
     t("input.placeholder1"),
@@ -472,8 +476,42 @@ function ChatPageInner() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
+  // Telegram BackButton — появляется, когда есть активный чат
+  useEffect(() => {
+    if (!isTelegram || !tg?.BackButton) return;
+
+    const handleBack = () => {
+      haptic?.("light");
+      if (messages.length > 0) {
+        // сброс текущего чата
+        setMessages([]);
+        setPinned(null);
+        sentPromptRef.current = null;
+        clearMessages();
+        clearLastPrompt();
+        router.replace("/chat");
+      } else {
+        tg.close?.();
+      }
+    };
+
+    if (messages.length > 0) {
+      tg.BackButton.show();
+      tg.BackButton.onClick(handleBack);
+    } else {
+      tg.BackButton.hide();
+    }
+
+    return () => {
+      tg.BackButton?.offClick(handleBack);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isTelegram, tg, messages.length]);
+
   // handleSend
   const handleSend = async (prompt?: string, imageOverride?: string) => {
+    haptic?.("medium");
+
     const textToSend = prompt ?? input;
     const img = imageOverride ?? pendingImage ?? undefined;
 
@@ -525,6 +563,9 @@ function ChatPageInner() {
             : m
         )
       );
+
+      // Успешное завершение — лёгкая вибрация
+      haptic?.("light");
 
       if (result.prediction) {
         addPrediction({
@@ -595,6 +636,7 @@ function ChatPageInner() {
 
   // misc
   const handleFile = async (file: File) => {
+    haptic?.("light");
     if (!file.type.startsWith("image/")) return alert(t("error.imagesOnly"));
     if (file.size > 15 * 1024 * 1024) return alert(t("error.maxSize"));
     try {
@@ -615,6 +657,7 @@ function ChatPageInner() {
   };
 
   const rate = (id: number, r: "up" | "down") => {
+    haptic?.("light");
     setMessages((m) =>
       m.map((x) => (x.id === id ? { ...x, rating: x.rating === r ? undefined : r } : x))
     );
@@ -635,6 +678,7 @@ function ChatPageInner() {
   };
 
   const handleNewChat = () => {
+    haptic?.("light");
     setMessages([]);
     setPinned(null);
     sentPromptRef.current = null;
@@ -735,7 +779,7 @@ function ChatPageInner() {
   return (
     <SidebarProvider>
       <AppSidebar
-        user={{ id: "1", name: "Leonid", email: "leonid@mail.ru" }}
+        user={{ id: "1", name: displayName, email: "leonid@mail.ru" }}
         onLogout={() => console.log("logout")}
       />
       <SidebarInset className="overflow-hidden flex flex-col">
@@ -762,7 +806,7 @@ function ChatPageInner() {
           </div>
           <div className="ml-auto flex items-center gap-3">
             <div className="text-sm text-muted-foreground hidden md:block">
-              {t("nav.welcome")}, <span className="font-medium text-foreground">Leonid</span>
+              {t("nav.welcome")}, <span className="font-medium text-foreground">{displayName}</span>
             </div>
             <LanguageSwitcher />
             <ThemeToggle />
@@ -968,7 +1012,9 @@ function ChatPageInner() {
 
                       {message.role === "user" && (
                         <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0">
-                          <AvatarFallback className="bg-muted text-[10px] sm:text-xs">NN</AvatarFallback>
+                          <AvatarFallback className="bg-muted text-[10px] sm:text-xs">
+                            {displayName.slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
                         </Avatar>
                       )}
                     </div>
