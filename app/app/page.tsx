@@ -16,8 +16,9 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { useAuth } from '@/contexts/AuthContext';
-import { useEffect, useState } from 'react';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import { useTelegram } from '@/components/telegram-provider';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, Zap } from 'lucide-react';
 import { Instrument_Serif } from 'next/font/google';
@@ -25,7 +26,7 @@ import {
   FootballIcon, TargetIcon, ChartIcon,
   TrophyIcon, TicketIcon, CameraIcon, BrainIcon,
 } from '@/components/animated-icons/football-icons';
-import { LanguageSwitcher } from '@/components/language-switcher';
+import { useTranslation } from '@/lib/i18n';
 
 const instrumentSerif = Instrument_Serif({
   weight: '400',
@@ -33,13 +34,12 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export default function Page() {
-  const { user, loading, logout } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
+  const { tg, user: tgUser, haptic } = useTelegram();
   const [loadingCards, setLoadingCards] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    if (!loading && !user) router.push('/login');
-  }, [user, loading, router]);
+  const displayName = tgUser?.first_name?.trim() || 'Player';
 
   // 6 cards — football theme
   const actionItems = [
@@ -87,25 +87,22 @@ export default function Page() {
     },
   ];
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-sm">just a moment...</div>
-      </div>
-    );
-  }
-  if (!user) return null;
-
-  const handleLogout = async () => {
-    await logout();
-  };
-
   const handleCardClick = (item: typeof actionItems[0]) => {
+    haptic?.('medium');
     setLoadingCards((prev) => ({ ...prev, [item.id]: true }));
     setTimeout(() => {
       setLoadingCards((prev) => ({ ...prev, [item.id]: false }));
       router.push(item.href);
     }, 400);
+  };
+
+  const handleLogout = () => {
+    if (tg?.close) {
+      tg.close();
+    } else {
+      try { localStorage.clear(); } catch {}
+      window.location.reload();
+    }
   };
 
   const getGreeting = () => {
@@ -118,9 +115,16 @@ export default function Page() {
 
   return (
     <SidebarProvider>
-      <AppSidebar user={user} onLogout={handleLogout} />
-      <SidebarInset>
-        <header className="flex h-12 shrink-0 items-center gap-2 px-4">
+      <AppSidebar
+        user={{
+          id: tgUser?.id?.toString() || 'guest',
+          name: displayName,
+          email: tgUser?.username ? `@${tgUser.username}` : '',
+        }}
+        onLogout={handleLogout}
+      />
+      <SidebarInset className="overflow-hidden flex flex-col">
+        <header className="flex h-12 shrink-0 items-center gap-2 px-4 border-b">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
             <Separator
@@ -130,7 +134,7 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/app">Dashboard</BreadcrumbLink>
+                  <BreadcrumbLink href="/app">{t("nav.dashboard")}</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -139,9 +143,9 @@ export default function Page() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <div className="ml-auto flex items-center gap-4">
-            <div className="text-sm text-muted-foreground">
-              Welcome, <span className="font-medium text-foreground">{user.name}</span>
+          <div className="ml-auto flex items-center gap-3">
+            <div className="text-sm text-muted-foreground hidden md:block">
+              {t("nav.welcome")}, <span className="font-medium text-foreground">{displayName}</span>
             </div>
             <LanguageSwitcher />
             <ThemeToggle />
@@ -218,6 +222,10 @@ export default function Page() {
                     >
                       Claim bonus
                     </a>
+
+                    <p className="text-[9px] text-muted-foreground mt-2">
+                      18+ · Play responsibly
+                    </p>
                   </div>
 
                   <div className="absolute bottom-0 right-0 pointer-events-none">
@@ -237,7 +245,7 @@ export default function Page() {
           {/* ROW 2: Greeting */}
           <div className="flex gap-2 items-stretch">
             <h1 className="text-lg font-bold">
-              {getGreeting()}, {user.name}
+              {getGreeting()}, {displayName}
             </h1>
             <button
               onClick={() => router.push('/trading/settings/usage')}
@@ -251,23 +259,23 @@ export default function Page() {
           {/* ROW 3: Recent predictions */}
           <div className="rounded-xl bg-card border border-border/50">
             <div className="p-4 border-b border-border/50 flex items-center justify-between">
-              <span className="text-sm font-medium">Recent predictions</span>
+              <span className="text-sm font-medium">{t("side.predictions")}</span>
               <button
                 onClick={() => router.push('/chat')}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
-                Open chat →
+                {t("side.openChat")} →
               </button>
             </div>
             <div className="flex items-center justify-center min-h-[240px]">
               <div className="text-center">
-                <p className="text-md text-muted-foreground">No predictions yet</p>
+                <p className="text-md text-muted-foreground">{t("side.noPredictions")}</p>
                 <p className="text-xs text-muted-foreground mt-1">
                   <button
                     onClick={() => router.push('/chat')}
                     className="underline hover:text-foreground transition-colors cursor-pointer"
                   >
-                    Ask the AI for your first pick
+                    {t("side.askFirst")}
                   </button>
                 </p>
               </div>

@@ -1,12 +1,5 @@
-import { redirect } from 'next/navigation';
-import { getCurrentUser } from '@/lib/auth';
+import { redirect } from "next/navigation"
 
-export default async function Home() {
-  const user = await getCurrentUser();
-
-  if (user) {
-    redirect('/app');
-  } else {
-    redirect('/login');
-  }
+export default function Home() {
+  redirect("/chat")
 }

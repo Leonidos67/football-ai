@@ -1,14 +1,15 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import {
   BadgeCheck,
+  Bell,
   ChevronsUpDown,
   LogOut,
   Settings,
   Palette,
   BarChart3,
 } from "lucide-react"
-import { useRouter } from "next/navigation"
 
 import {
   Avatar,
@@ -50,14 +51,17 @@ export function NavUser({
     .map((w) => w[0])
     .join("")
     .slice(0, 2)
-    .toUpperCase() || "NN"
+    .toUpperCase() || "P"
 
   const handleLogout = () => {
     if (onLogout) {
       onLogout()
     } else {
-      // fallback — если снаружи не передали onLogout
-      router.push("/login")
+      // Просто очищаем локальные данные
+      try {
+        localStorage.clear()
+      } catch {}
+      window.location.reload()
     }
   }
 
@@ -119,6 +123,10 @@ export function NavUser({
               <DropdownMenuItem onClick={() => router.push("/trading/settings/usage")}>
                 <BarChart3 />
                 Usage
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/trading/settings/notifications")}>
+                <Bell />
+                Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
