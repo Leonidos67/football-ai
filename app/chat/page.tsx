@@ -17,9 +17,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ImagePicker } from "@/components/image-picker";
 import { AppSidebar } from "@/components/app-sidebar";
 import { cn } from "@/lib/utils";
-import { LanguageSwitcher } from "@/components/language-switcher";
 import {
   loadMessages,
   saveMessages,
@@ -30,7 +31,7 @@ import {
   type ChatMessage,
 } from "@/lib/chat-history";
 import {
-  Settings, Plus, Zap, Paperclip, ArrowUp, X,
+  Settings, Plus, Zap, ArrowUp, X,
   CornerDownRight, Target, Copy, Check, Pin,
   RefreshCw, ThumbsUp, ThumbsDown, ChevronDown, Calendar,
   Bot,
@@ -47,6 +48,7 @@ import {
   loadHistory,
   type PredictionHistoryItem,
 } from "@/lib/prediction-history";
+import { useTranslation } from "@/lib/i18n";
 
 // ─────────────────────────────────────────────────────────
 // Types
@@ -195,46 +197,31 @@ async function streamAgentReply(
 }
 
 // ─────────────────────────────────────────────────────────
-// Placeholder
+// useTypingPlaceholder
 // ─────────────────────────────────────────────────────────
-const placeholderTexts = [
-  "Describe a match — I'll give a prediction...",
-  "Upload a betting line screenshot...",
-  "Top 5 matches today...",
-];
-
-function useTypingPlaceholder() {
+function useTypingPlaceholder(texts: string[]) {
   const [textIndex, setTextIndex] = useState(0);
   const [subIndex, setSubIndex] = useState(0);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    const current = placeholderTexts[textIndex];
+    const current = texts[textIndex];
+    if (!current) return;
     if (!deleting && subIndex === current.length) {
       const t = setTimeout(() => setDeleting(true), 1400);
       return () => clearTimeout(t);
     }
     if (deleting && subIndex === 0) {
       setDeleting(false);
-      setTextIndex((prev) => (prev + 1) % placeholderTexts.length);
+      setTextIndex((prev) => (prev + 1) % texts.length);
       return;
     }
     const t = setTimeout(() => setSubIndex((p) => p + (deleting ? -1 : 1)), deleting ? 15 : 35);
     return () => clearTimeout(t);
-  }, [subIndex, deleting, textIndex]);
+  }, [subIndex, deleting, textIndex, texts]);
 
-  return placeholderTexts[textIndex].slice(0, subIndex);
+  return (texts[textIndex] ?? "").slice(0, subIndex);
 }
-
-// ─────────────────────────────────────────────────────────
-// Quick prompts
-// ─────────────────────────────────────────────────────────
-const quickPrompts = [
-  { text: "Give a prediction for today", icon: CornerDownRight },
-  { text: "Top 5 matches today", icon: CornerDownRight },
-  { text: "Premier League predictions", icon: CornerDownRight },
-  { text: "What about risk?", icon: CornerDownRight },
-];
 
 // ─────────────────────────────────────────────────────────
 // PredictionCard
@@ -250,6 +237,7 @@ function PredictionCard({
 }) {
   const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
   const { match, league, date, market, odds, confidence, reasoning } = prediction;
 
   const level =
@@ -268,7 +256,7 @@ function PredictionCard({
     const text =
       `⚽ ${match}\n` +
       `🏆 ${league} · ${date}\n` +
-      `📊 Pick: ${market} · Odds ${odds.toFixed(2)} · Confidence ${confidence}%\n\n` +
+      `📊 ${t("prediction.pick")}: ${market} · ${t("prediction.odds")} ${odds.toFixed(2)} · ${t("prediction.confidence")} ${confidence}%\n\n` +
       `💡 ${reasoning}`;
     try {
       await navigator.clipboard.writeText(text);
@@ -299,20 +287,20 @@ function PredictionCard({
               <Calendar size={10} />
               <span>{date}</span>
             </div>
-            <IconBtn onClick={copy} title="Copy">
+            <IconBtn onClick={copy} title={t("prediction.copy")}>
               {copied ? <Check size={13} className="text-emerald-600" /> : <Copy size={13} />}
             </IconBtn>
             {onRegenerate && (
-              <IconBtn onClick={onRegenerate} title="Regenerate">
+              <IconBtn onClick={onRegenerate} title={t("prediction.regenerate")}>
                 <RefreshCw size={13} />
               </IconBtn>
             )}
             {onRate && (
               <>
-                <IconBtn onClick={() => onRate("up")} title="Good" active={rating === "up"} activeClass="bg-emerald-100 text-emerald-700">
+                <IconBtn onClick={() => onRate("up")} title={t("prediction.good")} active={rating === "up"} activeClass="bg-emerald-100 text-emerald-700">
                   <ThumbsUp size={13} />
                 </IconBtn>
-                <IconBtn onClick={() => onRate("down")} title="Bad" active={rating === "down"} activeClass="bg-red-100 text-red-600">
+                <IconBtn onClick={() => onRate("down")} title={t("prediction.bad")} active={rating === "down"} activeClass="bg-red-100 text-red-600">
                   <ThumbsDown size={13} />
                 </IconBtn>
               </>
@@ -329,7 +317,7 @@ function PredictionCard({
         <div className="flex items-stretch gap-2 sm:gap-3 mt-2 sm:mt-3">
           <div className="flex-1 min-w-0 space-y-1.5 sm:space-y-2">
             <div>
-              <div className="text-[9px] sm:text-[10px] uppercase text-muted-foreground font-medium mb-1">Pick</div>
+              <div className="text-[9px] sm:text-[10px] uppercase text-muted-foreground font-medium mb-1">{t("prediction.pick")}</div>
               <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-foreground text-background text-[11px] sm:text-xs font-semibold">
                 <Target size={10} />
                 {market}
@@ -337,7 +325,7 @@ function PredictionCard({
             </div>
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[9px] sm:text-[10px] uppercase text-muted-foreground font-medium">Confidence</span>
+                <span className="text-[9px] sm:text-[10px] uppercase text-muted-foreground font-medium">{t("prediction.confidence")}</span>
                 <span className={`text-[11px] sm:text-xs font-bold ${palette.text}`}>{confidence}%</span>
               </div>
               <div className="h-1 sm:h-1.5 rounded-full bg-muted overflow-hidden">
@@ -347,7 +335,7 @@ function PredictionCard({
           </div>
 
           <div className="shrink-0 flex flex-col items-center justify-center px-2.5 sm:px-4 rounded-xl bg-muted/50 border border-border min-w-[64px] sm:min-w-[88px]">
-            <div className="text-[8px] sm:text-[9px] uppercase text-muted-foreground font-medium mb-0.5">Odds</div>
+            <div className="text-[8px] sm:text-[9px] uppercase text-muted-foreground font-medium mb-0.5">{t("prediction.odds")}</div>
             <div className="text-lg sm:text-2xl font-bold text-foreground tabular-nums leading-none">{odds.toFixed(2)}</div>
           </div>
         </div>
@@ -356,7 +344,7 @@ function PredictionCard({
           onClick={() => setOpen((v) => !v)}
           className="w-full flex items-center justify-between mt-2 sm:mt-3 py-1.5 text-[10px] sm:text-[11px] text-muted-foreground hover:text-foreground transition"
         >
-          <span className="font-medium">Why this prediction?</span>
+          <span className="font-medium">{t("prediction.why")}</span>
           <ChevronDown size={13} className={`transition-transform ${open ? "rotate-180" : ""}`} />
         </button>
 
@@ -432,6 +420,7 @@ function InteractiveDotPattern({ className }: { className?: string }) {
 function ChatPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -443,10 +432,20 @@ function ChatPageInner() {
   const [hydrated, setHydrated] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
   const sentPromptRef = useRef<string | null>(null);
 
-  const placeholder = useTypingPlaceholder();
+  const placeholder = useTypingPlaceholder([
+    t("input.placeholder1"),
+    t("input.placeholder2"),
+    t("input.placeholder3"),
+  ]);
+
+  const quickPrompts = [
+    { text: t("prompt.today"), icon: CornerDownRight },
+    { text: t("prompt.top5"), icon: CornerDownRight },
+    { text: t("prompt.epl"), icon: CornerDownRight },
+    { text: t("prompt.risk"), icon: CornerDownRight },
+  ];
 
   // Восстановление
   useEffect(() => {
@@ -552,7 +551,7 @@ function ChatPageInner() {
         );
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to get response";
+      const msg = err instanceof Error ? err.message : t("error.failed");
       setMessages((prev) =>
         prev.map((m) =>
           m.id === aiId ? { ...m, content: `⚠️ ${msg}`, streaming: false } : m
@@ -585,24 +584,24 @@ function ChatPageInner() {
       setMessages([]);
       clearMessages();
 
-      const t = setTimeout(() => {
+      const timer = setTimeout(() => {
         handleSend(prompt);
       }, 250);
 
-      return () => clearTimeout(t);
+      return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, hydrated]);
 
   // misc
   const handleFile = async (file: File) => {
-    if (!file.type.startsWith("image/")) return alert("Images only");
-    if (file.size > 15 * 1024 * 1024) return alert("Max 15 MB");
+    if (!file.type.startsWith("image/")) return alert(t("error.imagesOnly"));
+    if (file.size > 15 * 1024 * 1024) return alert(t("error.maxSize"));
     try {
       const compressed = await compressImage(file);
       setPendingImage(compressed);
     } catch {
-      alert("Failed to process image");
+      alert(t("error.imageProcess"));
     }
   };
 
@@ -651,8 +650,8 @@ function ChatPageInner() {
         <div className="flex items-center gap-2 sm:gap-3 border-b border-border p-2 sm:p-3">
           <img src={pendingImage} alt="preview" className="w-10 h-10 sm:w-14 sm:h-14 rounded-lg object-cover border border-border" />
           <div className="flex-1 min-w-0">
-            <p className="text-[11px] sm:text-xs font-medium">Image ready</p>
-            <p className="text-[10px] sm:text-[11px] text-muted-foreground">AI will recognize the match</p>
+            <p className="text-[11px] sm:text-xs font-medium">{t("input.imageReady")}</p>
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground">{t("input.imageHint")}</p>
           </div>
           <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8 shrink-0" onClick={() => setPendingImage(null)}>
             <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -676,44 +675,28 @@ function ChatPageInner() {
 
       <div className="flex items-center justify-between gap-2 px-2 sm:px-4 pb-2 sm:pb-4 pt-1">
         <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) handleFile(f);
-              e.target.value = "";
-            }}
+          <ImagePicker
+            onPick={(file) => handleFile(file)}
+            disabled={isLoading}
           />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 sm:h-9 sm:w-9 rounded-full shrink-0"
-            onClick={() => fileRef.current?.click()}
-            title="Upload match screenshot"
-          >
-            <Paperclip className="h-4 w-4" />
-          </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="h-8 gap-1 rounded-full px-2 text-xs shrink-0">
                 <Zap className="w-3.5 h-3.5 text-[#e72930]" />
-                <span className="font-medium hidden xs:inline sm:inline">Auto</span>
+                <span className="font-medium hidden xs:inline sm:inline">{t("input.auto")}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48">
-              <DropdownMenuLabel>Mode</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("input.mode")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <Zap className="mr-2 h-4 w-4 text-[#e72930]" />
-                Fast
+                {t("input.mode.fast")}
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Bot className="mr-2 h-4 w-4" />
-                Deep analysis
+                {t("input.mode.deep")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -725,7 +708,7 @@ function ChatPageInner() {
             onClick={() => router.push("/trading/ai-settings")}
           >
             <Settings className="w-3.5 h-3.5 text-[#e72930]" />
-            <span>Settings</span>
+            <span>{t("nav.settings")}</span>
           </Button>
         </div>
 
@@ -757,18 +740,36 @@ function ChatPageInner() {
       />
       <SidebarInset className="overflow-hidden flex flex-col">
 
-        {/* ─── TOP HEADER (breadcrumb) ─── */}
+        {/* TOP HEADER */}
         <header className="flex h-12 shrink-0 items-center gap-2 px-4 border-b">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-[orientation=vertical]:h-4"
+            />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="/app">{t("nav.dashboard")}</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{t("nav.chat")}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
           </div>
-          <div className="ml-auto flex items-center gap-4">
+          <div className="ml-auto flex items-center gap-3">
+            <div className="text-sm text-muted-foreground hidden md:block">
+              {t("nav.welcome")}, <span className="font-medium text-foreground">Leonid</span>
+            </div>
             <LanguageSwitcher />
             <ThemeToggle />
           </div>
         </header>
 
-        {/* ─── CHAT AREA ─── */}
+        {/* CHAT AREA */}
         <div
           className="relative flex flex-col overflow-hidden flex-1 min-h-0"
           onDragOver={handleDragOver}
@@ -781,8 +782,8 @@ function ChatPageInner() {
             <div className="absolute inset-0 z-50 bg-foreground/40 backdrop-blur-sm flex items-center justify-center pointer-events-none">
               <div className="bg-card rounded-3xl px-10 py-8 shadow-2xl border-2 border-dashed border-border">
                 <div className="text-4xl mb-2 text-center">📸</div>
-                <p className="text-foreground font-semibold text-center">Drop the image</p>
-                <p className="text-muted-foreground text-xs mt-1 text-center">AI will recognize the match</p>
+                <p className="text-foreground font-semibold text-center">{t("drag.title")}</p>
+                <p className="text-muted-foreground text-xs mt-1 text-center">{t("drag.subtitle")}</p>
               </div>
             </div>
           )}
@@ -800,10 +801,10 @@ function ChatPageInner() {
                     </div>
                   </div>
                   <h1 className="mt-3 sm:mt-4 text-xl sm:text-3xl font-bold uppercase tracking-wide text-center">
-                    Start match analysis
+                    {t("empty.title")}
                   </h1>
                   <p className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-muted-foreground text-center">
-                    DEMO · AI football predictions
+                    {t("empty.subtitle")}
                   </p>
                 </div>
 
@@ -845,17 +846,17 @@ function ChatPageInner() {
                       </div>
                     </div>
                     <div className="min-w-0">
-                      <h2 className="text-base sm:text-lg font-bold truncate">Pelada</h2>
+                      <h2 className="text-base sm:text-lg font-bold truncate">{t("chat.title")}</h2>
                       <p className="text-[10px] sm:text-xs text-muted-foreground flex items-center gap-1">
                         <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500 inline-block" />
-                        {isLoading ? "analyzing..." : "online"}
+                        {isLoading ? t("chat.analyzing") : t("chat.online")}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                     <Button variant="ghost" size="sm" onClick={handleNewChat} className="h-8 text-xs sm:text-sm px-2 sm:px-3">
                       <Plus className="w-4 h-4 sm:hidden" />
-                      <span className="hidden sm:inline">New chat</span>
+                      <span className="hidden sm:inline">{t("nav.newChat")}</span>
                     </Button>
                     <Button
                       variant="outline"
@@ -864,7 +865,7 @@ function ChatPageInner() {
                       className="h-8 w-8 sm:w-auto sm:px-3 sm:gap-2"
                     >
                       <Settings className="w-4 h-4" />
-                      <span className="hidden sm:inline text-sm">Settings</span>
+                      <span className="hidden sm:inline text-sm">{t("nav.settings")}</span>
                     </Button>
                   </div>
                 </div>
@@ -879,7 +880,7 @@ function ChatPageInner() {
 
                       <div className="flex-1 min-w-0">
                         <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-[#e72930] font-bold block truncate">
-                          Pinned · {pinned.league}
+                          {t("pinned.label")} · {pinned.league}
                         </span>
                         <p className="text-xs sm:text-sm font-semibold truncate mt-0.5">
                           {pinned.match}

@@ -33,10 +33,12 @@ import {
   removePrediction,
   type PredictionHistoryItem,
 } from '@/lib/prediction-history'
+import { useTranslation } from '@/lib/i18n'
 
 export function NavProjects() {
   const { isMobile } = useSidebar()
   const router = useRouter()
+  const { t } = useTranslation()
   const [items, setItems] = useState<PredictionHistoryItem[]>([])
   const [loading, setLoading] = useState(true)
   const [showBanner, setShowBanner] = useState(true)
@@ -75,7 +77,7 @@ export function NavProjects() {
     const hours = Math.floor(diff / 3600000)
     const days = Math.floor(diff / 86400000)
 
-    if (minutes < 1) return 'just now'
+    if (minutes < 1) return t("side.justNow")
     if (minutes < 60) return `${minutes}m`
     if (hours < 24) return `${hours}h`
     if (days === 1) return '1d'
@@ -98,7 +100,7 @@ export function NavProjects() {
           <div className="flex items-center px-2 py-1.5">
             <Target className="w-3 h-3 text-muted-foreground mr-2" />
             <SidebarGroupLabel className="p-0 text-xs">
-              Predictions
+              {t("side.predictions")}
             </SidebarGroupLabel>
             {items.length > 0 && (
               <span className="ml-auto text-[10px] text-muted-foreground pr-2 tabular-nums">
@@ -128,17 +130,17 @@ export function NavProjects() {
                 </div>
 
                 <span className="text-sm font-semibold text-foreground">
-                  No predictions yet
+                  {t("side.noPredictions")}
                 </span>
                 <span className="text-xs text-muted-foreground -mt-2">
-                  Ask the AI for your first pick
+                  {t("side.askFirst")}
                 </span>
 
                 <button
                   onClick={() => router.push('/chat')}
                   className="mt-1 text-[11px] px-3 py-1 rounded-full bg-[#e72930] text-white hover:bg-[#e72930]/80 transition-colors font-medium"
                 >
-                  Open chat
+                  {t("side.openChat")}
                 </button>
               </div>
             ) : (
@@ -188,7 +190,7 @@ export function NavProjects() {
                       >
                         <DropdownMenuItem onClick={() => handleItemClick(item)}>
                           <TrendingUp className="text-muted-foreground" />
-                          <span>Detailed analysis</span>
+                          <span>{t("side.detailedAnalysis")}</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
@@ -196,7 +198,7 @@ export function NavProjects() {
                           className="text-red-500 focus:text-red-500 focus:bg-red-500/10"
                         >
                           <Trash2 />
-                          <span>Remove</span>
+                          <span>{t("side.remove")}</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

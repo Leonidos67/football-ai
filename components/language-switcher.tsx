@@ -16,9 +16,10 @@ import {
   LANGUAGES,
   type Language,
 } from "@/lib/language"
+import { useTranslation } from "@/lib/i18n"
 
 // ─────────────────────────────────────────────
-// SVG-флаги (20×14) — работают везде
+// SVG-флаги (как в прошлом сообщении)
 // ─────────────────────────────────────────────
 function FlagBR({ className = "" }: { className?: string }) {
   return (
@@ -26,12 +27,7 @@ function FlagBR({ className = "" }: { className?: string }) {
       <rect width="20" height="14" fill="#009C3B" />
       <path d="M10 1.8L18.5 7L10 12.2L1.5 7L10 1.8Z" fill="#FFDF00" />
       <circle cx="10" cy="7" r="3.2" fill="#002776" />
-      <path
-        d="M6.9 6.2C8.5 5.5 11.5 5.5 13.1 6.4"
-        stroke="#fff"
-        strokeWidth="0.5"
-        fill="none"
-      />
+      <path d="M6.9 6.2C8.5 5.5 11.5 5.5 13.1 6.4" stroke="#fff" strokeWidth="0.5" fill="none" />
     </svg>
   )
 }
@@ -75,6 +71,7 @@ const FLAG_COMPONENTS: Record<Language, React.ComponentType<{ className?: string
 
 export function LanguageSwitcher() {
   const [lang, setLang] = useState<Language>("en")
+  const { t } = useTranslation()
 
   useEffect(() => {
     setLang(getLanguage())
@@ -92,7 +89,7 @@ export function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" aria-label="Change language">
+        <Button variant="outline" size="icon" aria-label={t("nav.language")}>
           <CurrentFlag className="h-4 w-6 rounded-[2px] overflow-hidden shadow-sm ring-1 ring-black/10" />
           <span className="sr-only">Toggle language</span>
         </Button>
