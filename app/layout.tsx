@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import Script from 'next/script'
 import { Analytics } from '@vercel/analytics/next'
-import { AuthProvider } from '@/contexts/AuthContext'
 import { ThemeProvider } from '@/components/theme-provider'
 import { TelegramProvider } from '@/components/telegram-provider'
 import './globals.css'
@@ -53,7 +52,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Telegram WebApp SDK — грузим до интерактива */}
         <Script
           src="https://telegram.org/js/telegram-web-app.js"
           strategy="beforeInteractive"
@@ -67,10 +65,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TelegramProvider>
-            <AuthProvider>
-              {children}
-              {process.env.NODE_ENV === 'production' && <Analytics />}
-            </AuthProvider>
+            {children}
+            {process.env.NODE_ENV === 'production' && <Analytics />}
           </TelegramProvider>
         </ThemeProvider>
       </body>

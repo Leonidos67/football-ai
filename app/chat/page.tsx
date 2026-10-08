@@ -436,7 +436,9 @@ function ChatPageInner() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const sentPromptRef = useRef<string | null>(null);
 
-  const displayName = tgUser?.first_name || "Leonid";
+  const displayName = tgUser?.first_name?.trim() || "Player";
+  const displayInitials =
+    ((tgUser?.first_name?.[0] || "") + (tgUser?.last_name?.[0] || "")).toUpperCase() || "P";
 
   const placeholder = useTypingPlaceholder([
     t("input.placeholder1"),
@@ -779,8 +781,14 @@ function ChatPageInner() {
   return (
     <SidebarProvider>
       <AppSidebar
-        user={{ id: "1", name: displayName, email: "leonid@mail.ru" }}
-        onLogout={() => console.log("logout")}
+        user={{
+          id: tgUser?.id?.toString() || "guest",
+          name: displayName,
+          email: tgUser?.username ? `@${tgUser.username}` : "",
+        }}
+        onLogout={() => {
+          tg?.close?.();
+        }}
       />
       <SidebarInset className="overflow-hidden flex flex-col">
 
@@ -1013,7 +1021,7 @@ function ChatPageInner() {
                       {message.role === "user" && (
                         <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0">
                           <AvatarFallback className="bg-muted text-[10px] sm:text-xs">
-                            {displayName.slice(0, 2).toUpperCase()}
+                            {displayInitials}
                           </AvatarFallback>
                         </Avatar>
                       )}
