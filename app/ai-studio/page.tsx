@@ -103,7 +103,7 @@ export default function AIStudioPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">AI-Студия — Мои проекты</h2>
               <div className='flex gap-2'>
-                <button onClick={() => router.push('/ai-studio/new')} className="flex items-center gap-1 px-3 py-1 rounded-md bg-[#8B9A46] text-white hover:bg-[#7a8a3d] transition-colors text-sm font-medium">
+                <button onClick={() => router.push('/ai-studio/new')} className="flex items-center gap-1 px-3 py-1 rounded-md bg-[#e72930] text-white hover:bg-[#e72930]/80 transition-colors text-sm font-medium">
                   <Plus className="w-4 h-4" />
                   <span>Создать</span>
                 </button>

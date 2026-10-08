@@ -20,6 +20,9 @@ yarn-error.log*
 .env*
 !.env.example
 
+# local paper-trading ledger
+/data/
+
 # vercel
 .vercel
 

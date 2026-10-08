@@ -589,7 +589,7 @@ export default function GenerateContentPage() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center border gap-2 hover:bg-muted/50 px-2 py-1.5 rounded-md transition-colors cursor-pointer">
-                  <div className="w-8 h-8 rounded-lg bg-[#8B9A46] flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-[#e72930] flex items-center justify-center flex-shrink-0">
                     <Factory className="w-4 h-4 text-white" />
                   </div>
                   <div className="text-left">
@@ -639,8 +639,8 @@ export default function GenerateContentPage() {
                           p._id === projectId ? 'bg-muted' : 'hover:bg-muted/50'
                         }`}
                       >
-                        <div className="w-8 h-8 rounded-lg bg-[#8B9A46]/20 flex items-center justify-center flex-shrink-0">
-                          <Factory className="w-4 h-4 text-[#8B9A46]" />
+                        <div className="w-8 h-8 rounded-lg bg-[#e72930]/20 flex items-center justify-center flex-shrink-0">
+                          <Factory className="w-4 h-4 text-[#e72930]" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{p.name}</p>

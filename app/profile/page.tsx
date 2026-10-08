@@ -78,13 +78,13 @@ export default function ProfilePage() {
 
             {/* Subscription & Credits */}
             <div className="space-y-4">
-              <div className="rounded-lg bg-gradient-to-r from-[#8B9A46]/10 to-[#8B9A46]/5 border border-[#8B9A46]/20 p-4">
+              <div className="rounded-lg bg-gradient-to-r from-[#e72930]/10 to-[#e72930]/5 border border-[#e72930]/20 p-4">
                 <div className="flex items-center gap-3 mb-3">
-                  <CreditCard className="w-5 h-5 text-[#8B9A46]" />
+                  <CreditCard className="w-5 h-5 text-[#e72930]" />
                   <p className="font-medium">Подписка</p>
                 </div>
                 <p className="text-sm text-muted-foreground mb-2">Текущий план</p>
-                <p className="text-lg font-bold text-[#8B9A46]">Бесплатный</p>
+                <p className="text-lg font-bold text-[#e72930]">Бесплатный</p>
               </div>
 
               <div className="rounded-lg bg-muted/50 p-4">
@@ -127,7 +127,7 @@ export default function ProfilePage() {
         return (
           <div className="space-y-4">
             {/* Header */}
-            <div className="rounded-lg bg-gradient-to-r from-[#8B9A46]/10 to-[#8B9A46]/5 border border-[#8B9A46]/20 p-4">
+            <div className="rounded-lg bg-gradient-to-r from-[#e72930]/10 to-[#e72930]/5 border border-[#e72930]/20 p-4">
               <h3 className="text-xl font-bold mb-2">Партнерская программа</h3>
               <p className="text-sm text-muted-foreground">
                 Зарабатывайте до 40% комиссии - присоединяйтесь к партнерской программе, делитесь ссылкой с друзьями и коллегами,
@@ -149,8 +149,8 @@ export default function ProfilePage() {
 
               <div className="rounded-lg bg-muted/50 border border-border p-6">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full bg-[#8B9A46]/10 flex items-center justify-center">
-                    <CreditCard className="w-5 h-5 text-[#8B9A46]" />
+                  <div className="w-10 h-10 rounded-full bg-[#e72930]/10 flex items-center justify-center">
+                    <CreditCard className="w-5 h-5 text-[#e72930]" />
                   </div>
                   <p className="text-sm text-muted-foreground">Сумма продаж</p>
                 </div>

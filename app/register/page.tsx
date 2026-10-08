@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { LanguageSwitcher } from '@/components/language-switcher';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -45,7 +46,8 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted p-4 relative">
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 ml-auto flex items-center gap-2">
+        <LanguageSwitcher />
         <ThemeToggle />
       </div>
       <Card className="w-full max-w-md shadow-2xl">

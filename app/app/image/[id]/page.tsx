@@ -485,7 +485,7 @@ export default function ImageDialoguePage() {
                   <DropdownMenuTrigger asChild>
                     <button
                       onClick={() => setShowStyles(!showStyles)}
-                      className="px-4 py-2 rounded-lg bg-[#8B9A46] text-white hover:bg-[#7a8a3d] transition-colors text-sm font-medium flex items-center gap-2 cursor-pointer"
+                      className="px-4 py-2 rounded-lg bg-[#e72930] text-white hover:bg-[#7a8a3d] transition-colors text-sm font-medium flex items-center gap-2 cursor-pointer"
                     >
                       <Palette className="w-4 h-4" />
                       Стили

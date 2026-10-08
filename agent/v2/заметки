@@ -1,0 +1,98 @@
+Самая важная архитектурная часть
+
+Я бы сделал не одного агента, который сразу говорит LONG/SHORT, а pipeline:
+
+                    MARKET DATA
+                         │
+                         ▼
+                 MARKET SCANNER
+                         │
+                         ▼
+                  CANDIDATE SETUP
+                         │
+                         ▼
+                 MARKET ANALYSIS
+                         │
+             ┌───────────┴───────────┐
+             ▼                       ▼
+       CONFIRMATIONS           CONTRADICTIONS
+             │                       │
+             └───────────┬───────────┘
+                         ▼
+                  SETUP DETECTOR
+                         │
+                         ▼
+                  RISK MANAGER
+                         │
+                         ▼
+                 TRADE VALIDATOR
+                         │
+                 ┌───────┴───────┐
+                 ▼               ▼
+              INVALID          VALID
+                 │               │
+              NO TRADE            ▼
+                              EXECUTION
+                                  │
+                                  ▼
+                           POSITION MONITOR
+                                  │
+                                  ▼
+                           POST-TRADE ANALYSIS
+                                  │
+                                  ▼
+                              MEMORY
+
+Это гораздо ближе к логике Hermes из статьи, где отдельные Skills выполняют отдельные этапы, а не один огромный prompt пытается сделать всё сразу.
+
+И ещё один принцип — NO TRADE
+
+Я бы сделал его центральным.
+
+Например:
+
+TRADE DECISION
+
+LONG
+SHORT
+WAIT
+NO TRADE
+
+Причём:
+
+NO TRADE
+
+должен быть обычным и частым результатом, а не ошибкой.
+
+Иначе LLM начнёт оптимизироваться под то, чтобы постоянно выдавать тебе красивые LONG/SHORT.
+
+Что я предлагаю сделать дальше
+
+Я могу собрать тебе полный готовый пакет .md, уже не просто концепцию:
+
+SOUL.md
+
+skills/
+├── market-scanner/SKILL.md
+├── market-analysis/SKILL.md
+├── setup-detector/SKILL.md
+├── risk-manager/SKILL.md
+├── trade-validator/SKILL.md
+├── position-monitor/SKILL.md
+├── post-trade-analysis/SKILL.md
+└── watchlist-monitor/SKILL.md
+
+config/
+├── trading-config.md
+├── risk-config.md
+├── symbols.md
+└── execution-rules.md
+
+memory/
+├── trading-memory.md
+├── mistakes.md
+└── market-regimes.md
+
+Причём я бы сделал их именно под фьючерсы Binance/Bybit, с конкретными правилами для BTC/ETH/SOL, perpetuals, OI, funding, liquidation, CVD/volume, market structure, multi-timeframe analysis, R:R, position sizing, SL/TP и Telegram-отчётов.
+
+Отдельно можно заложить режимы ANALYSIS → SIGNAL → PAPER TRADE → LIVE, чтобы агент сначала прошёл калибровку на исторических/бумажных сделках и не получил возможность сразу раздавать реальные ордера. Это особенно важно, поскольку Hermes поддерживает инструменты, терминал, code execution, cron и MCP, то есть технически его можно сделать гораздо более автономным, чем обычного чат-бота.

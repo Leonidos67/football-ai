@@ -258,9 +258,9 @@ export default function NewImagePage() {
               <div className="flex-1 flex items-center justify-center p-8">
                 <div className="text-center space-y-4 max-w-md w-full">
                   <div className="relative z-10 text-center p-8">
-                    <h2 className="text-xl font-semibold mb-2">Изображение появится здесь</h2>
+                    <h2 className="text-xl font-semibold mb-2">Image will appear here</h2>
                     <p className="text-sm text-muted-foreground">
-                      Введите промт и нажмите "Сгенерировать" для создания изображения
+                      Enter the prompt and click “Generate” to create an image.
                     </p>
                   </div>
                 </div>
@@ -422,7 +422,7 @@ export default function NewImagePage() {
               <div className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
                 <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div>
                 <p className="text-xs font-medium text-yellow-600 dark:text-yellow-400">
-                  ТЕСТОВЫЙ РЕЖИМ - кредиты не списываются
+                  TEST MODE - credits are not deducted
                 </p>
               </div>
             )}
@@ -466,7 +466,7 @@ export default function NewImagePage() {
                       className="px-4 py-2 rounded-lg bg-black text-white hover:bg-black/80 transition-colors text-sm font-medium flex items-center gap-2 cursor-pointer"
                     >
                       <Bolt className="w-4 h-4" />
-                      Настройки
+                      Settings
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-120 p-4 space-y-1">
@@ -542,10 +542,10 @@ export default function NewImagePage() {
                   <DropdownMenuTrigger asChild>
                     <button
                       onClick={() => setShowStyles(!showStyles)}
-                      className="px-4 py-2 rounded-lg bg-[#8B9A46] text-white hover:bg-[#7a8a3d] transition-colors text-sm font-medium flex items-center gap-2 cursor-pointer"
+                      className="px-4 py-2 rounded-lg bg-[#e72930] text-white hover:bg-[#7a8a3d] transition-colors text-sm font-medium flex items-center gap-2 cursor-pointer"
                     >
                       <Palette className="w-4 h-4" />
-                      Стили
+                      Styles
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-120 p-4">
@@ -604,7 +604,7 @@ export default function NewImagePage() {
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder={dialogueStarted ? "Продолжите диалог или опишите новое изображение..." : "Опишите изображение, которое хотите создать..."}
+                  placeholder={dialogueStarted ? "Continue the dialogue or describe a new image..." : "Describe the image you want to create..."}
                   className="w-full h-22 px-4 py-3 resize-none outline-none transition-colors pr-16"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {

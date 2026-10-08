@@ -172,7 +172,7 @@ export function ProjectSidebar({
                   <div 
                     className="flex items-center gap-2 cursor-pointer group"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-[#8B9A46] flex items-center justify-center flex-shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-[#e72930] flex items-center justify-center flex-shrink-0">
                       <Factory className="w-4 h-4 text-white" />
                     </div>
                     <h2 className="text-sm font-semibold truncate flex-1">
@@ -215,8 +215,8 @@ export function ProjectSidebar({
                           p._id === projectId ? 'bg-muted' : ''
                         }`}
                       >
-                        <div className="w-7 h-7 rounded-lg bg-[#8B9A46]/20 flex items-center justify-center flex-shrink-0">
-                          <Factory className="w-3.5 h-3.5 text-[#8B9A46]" />
+                        <div className="w-7 h-7 rounded-lg bg-[#e72930]/20 flex items-center justify-center flex-shrink-0">
+                          <Factory className="w-3.5 h-3.5 text-[#e72930]" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-medium truncate">{p.name}</p>
