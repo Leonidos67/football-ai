@@ -223,10 +223,10 @@ export function NavProjects() {
             </button>
 
             <p className="text-[11px] font-medium text-muted-foreground mb-1 tracking-wide">
-              🎁 1WIN BONUS
+              🎁 LaVencer BONUS
             </p>
             <p className="text-sm font-bold leading-snug mb-3 text-foreground">
-              +100% to the first deposit
+              Leia nossos guias
             </p>
 
             <div className="relative flex justify-center items-center h-24 mb-3">

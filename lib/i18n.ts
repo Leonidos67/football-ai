@@ -33,7 +33,7 @@ export const translations: Record<Language, Dict> = {
     "prompt.today": "Give a prediction for today",
     "prompt.top5": "Top 5 matches today",
     "prompt.epl": "Premier League predictions",
-    "prompt.risk": "What about risk?",
+    "prompt.risk": "About risk",
 
     // Chat header
     "chat.title": "Pelada",

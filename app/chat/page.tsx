@@ -860,7 +860,7 @@ function ChatPageInner() {
                   </p>
                 </div>
 
-                <div className="w-full rounded-t-2xl bg-card p-2 sm:p-3 shadow-2xl backdrop-blur-md">
+                <div className="w-[calc(100%-40px)] mx-auto rounded-t-2xl bg-card p-2 sm:p-3 shadow-2xl backdrop-blur-md">
                   <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
                     {quickPrompts.map((p) => (
                       <Button
@@ -877,7 +877,7 @@ function ChatPageInner() {
                   </div>
                 </div>
 
-                <div className="w-full pb-3 pt-2 safe-bottom">
+                <div className="w-full pb-3 safe-bottom">
                   {inputBox}
                 </div>
               </div>
@@ -1030,22 +1030,7 @@ function ChatPageInner() {
 
                   <div ref={bottomRef} />
 
-                  {isLoading && !messages.some((m) => m.role === "ai" && m.content) && (
-                    <div className="flex gap-2 sm:gap-3">
-                      <div className="relative h-7 w-7 sm:h-9 sm:w-9 flex-shrink-0">
-                        <div className="bg-muted/30 h-full w-full rounded-full p-[2px]">
-                          <div className="bg-background/80 h-full w-full overflow-hidden rounded-full">
-                            <Orb colors={["#e72930", "#ff6b6b"]} seed={1000} agentState="talking" />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex gap-1 items-center bg-muted p-3 rounded-2xl">
-                        <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce" />
-                        <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0.2s]" />
-                        <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0.4s]" />
-                      </div>
-                    </div>
-                  )}
+                  
                 </div>
               </div>
 

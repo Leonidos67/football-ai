@@ -4,8 +4,7 @@ import { useRouter, usePathname } from "next/navigation"
 import {
   Bot, ArrowLeft, Cpu, Brain, Layers, Zap,
   Target, Trophy, Ticket, Bell, User, BarChart3, KeyRound,
-  Palette,
-  Keyboard, FlaskConical, Code2,
+  Palette, Keyboard, FlaskConical, Code2,
 } from "lucide-react"
 
 import {
@@ -14,7 +13,7 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar"
 
-const SETTINGS_GROUPS = [
+export const SETTINGS_GROUPS = [
   {
     label: "AI",
     items: [
@@ -61,7 +60,7 @@ export function TradingSidebar() {
     pathname === url || pathname.startsWith(url + "/")
 
   return (
-    <Sidebar collapsible="icon" variant="inset">
+    <Sidebar collapsible="icon" variant="inset" className="hidden lg:flex">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
